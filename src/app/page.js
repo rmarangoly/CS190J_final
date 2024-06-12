@@ -95,11 +95,11 @@ export default function Home() {
           <p>Go to the owned page.</p>
         </Link>
 
-        <Link href="/listpage" className={styles.card}>
+        <Link href="/sellpage" className={styles.card}>
           <h2>
-            List Page <span>-&gt;</span>
+            Sell Page <span>-&gt;</span>
           </h2>
-          <p>Go to the list page.</p>
+          <p>Go to the sell page.</p>
         </Link>
       </div>
     </main>
