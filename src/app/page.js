@@ -1,5 +1,6 @@
-import Image from 'next/image'
-import styles from './page.module.css'
+import Image from 'next/image';
+import styles from './page.module.css';
+import Link from 'next/link';
 
 export default function Home() {
   return (
@@ -90,6 +91,22 @@ export default function Home() {
           </p>
         </a>
       </div>
+
+      <div className={styles.grid}>
+        <Link href="/ownedpage" className={styles.card}>
+          <h2>
+            Owned Page <span>-&gt;</span>
+          </h2>
+          <p>Go to the owned page.</p>
+        </Link>
+
+        <Link href="/listpage" className={styles.card}>
+          <h2>
+            List Page <span>-&gt;</span>
+          </h2>
+          <p>Go to the list page.</p>
+        </Link>
+      </div>
     </main>
-  )
+  );
 }
