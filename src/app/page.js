@@ -6,23 +6,18 @@ export default function Home() {
   return (
     <main className={styles.main}>
       <div className={styles.description}>
-        <p>
-          Get started by editing&nbsp;
-          <code className={styles.code}>src/app/page.js</code>
-        </p>
         <div>
           <a
-            href="https://vercel.com?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
+            href="https://cdn.discordapp.com/attachments/1250543499221274857/1250554104497836032/market.jpg?ex=666b5cc4&is=666a0b44&hm=b5253e28d1b7eb2a0607f2e316d56f0d38779f787c4e0a2fa01a05ecec576e54&"
             target="_blank"
             rel="noopener noreferrer"
           >
             By{' '}
             <Image
-              src="/vercel.svg"
+              src="/market.jpg"
               alt="Vercel Logo"
-              className={styles.vercelLogo}
               width={100}
-              height={24}
+              height={100}
               priority
             />
           </a>
