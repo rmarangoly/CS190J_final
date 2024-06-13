@@ -1,33 +1,61 @@
-"use client";
+"use client";  // This directive tells Next.js that this component should be treated as a client component
 
-import Image from 'next/image';
-import Link from 'next/link';
-import { payUser } from '../utils/payment';
+import { useState, useEffect } from 'react';
+import { ethers } from 'ethers';
+import { payUser, getItemCount } from '../utils/payment';
 import styles from './page.module.css';
 import { navStyle, navLinkStyle } from '../app/navbarStyles';
-import { useState } from 'react';
+import Image from 'next/image';
 
-const ownedItems = [
-  { name: 'Vintage Watch', price: 250, ownerAddress: '0x123456789abcdef', id: 1 },
-  { name: 'Leather Wallet', price: 75, ownerAddress: '0x123456789abcdef', id: 2 },
-  { name: 'Bluetooth Speaker', price: 150, ownerAddress: '0x123456789abcdef', id: 3 },
-  { name: 'Smartphone', price: 600, ownerAddress: '0x123456789abcdef', id: 4 },
-  { name: 'Gaming Console', price: 300, ownerAddress: '0x123456789abcdef', id: 5 }
+
+const marketplaceAddress = '0xE419aEf5E71b5220D3EBAd8a48E6615F1bF53839';
+const marketplaceABI = [
+  "function items(uint256) view returns (uint256 id, address owner, uint256 price, bool listed)"
 ];
 
-const handleBuy = (item) => {
-  console.log(`Buying item: ${item.name}`);
-};
-
 export default function Home() {
-  const [recipient, setRecipient] = useState('');
-  const [amount, setAmount] = useState('');
+  const [items, setItems] = useState([]);
   const [status, setStatus] = useState('');
-  const handlePayment = async () => {
-    const success = await payUser(recipient, amount);
-    setStatus(success ? 'Payment successful!' : 'Payment failed.');
-  };
 
+  useEffect(() => {
+    const fetchItems = async () => {
+      if (!window.ethereum) return;
+      const itemCount = await getItemCount();
+      const provider = new ethers.providers.Web3Provider(window.ethereum);
+      const contract = new ethers.Contract(marketplaceAddress, marketplaceABI, provider);
+
+      const items = [];
+      for (let i = 1; i <= itemCount; i++) {
+        const item = await contract.items(i);
+        items.push({
+          id: item.id.toString(),
+          owner: item.owner,
+          price: ethers.utils.formatEther(item.price),
+          listed: item.listed,
+        });
+      }
+      setItems(items);
+    };
+
+    fetchItems();
+  }, []);
+
+  const handleBuy = async (item) => {
+    setStatus('Processing...');
+    const newOwner = await payUser(item.id, item.price);
+    setStatus(newOwner ? 'Purchase successful!' : 'Purchase failed.');
+
+    if (newOwner) {
+      // Refresh the item list after purchase
+      const updatedItems = items.map(i => {
+        if (i.id === item.id) {
+          return { ...i, owner: newOwner, listed: false }; // Update with your address
+        }
+        return i;
+      });
+      setItems(updatedItems);
+    }
+  };
   return (
     <main className={styles.main}>
       <nav>
@@ -40,11 +68,11 @@ export default function Home() {
       </nav>
       <div className={styles.content}>
         <h1 className={styles.title}>Items for Sale</h1>
-        {ownedItems.length === 0 ? (
+        {items.length === 0 ? (
           <p>No items owned.</p>
         ) : (
           <div className={styles.grid}>
-            {ownedItems.map((item, index) => (
+            {items.map((item, index) => (
               <div key={index} className={styles.card}>
                 <h2 className={styles.itemName}>{item.name}</h2>
                 <p className={styles.itemDetail}><strong>Price:</strong> ${item.price}</p>
@@ -56,23 +84,6 @@ export default function Home() {
           </div>
         )}
       </div>
-      <div>
-      <h1>Blockchain Payment</h1>
-      <input
-        type="text"
-        placeholder="Recipient Address"
-        value={recipient}
-        onChange={(e) => setRecipient(e.target.value)}
-      />
-      <input
-        type="text"
-        placeholder="Amount in ETH"
-        value={amount}
-        onChange={(e) => setAmount(e.target.value)}
-      />
-      <button onClick={handlePayment}>Pay</button>
-      <p>{status}</p>
-    </div>
     </main>
   );
 }
