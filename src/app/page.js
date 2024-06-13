@@ -2,12 +2,10 @@
 
 import Image from 'next/image';
 import Link from 'next/link';
-import { useState } from 'react';
 import { payUser } from '../utils/payment';
 import styles from './page.module.css';
 import { navStyle, navLinkStyle } from '../app/navbarStyles';
 import { useState } from 'react';
-import { payUser } from '../utils/payment';
 
 const ownedItems = [
   { name: 'Vintage Watch', price: 250, ownerAddress: '0x123456789abcdef', id: 1 },
