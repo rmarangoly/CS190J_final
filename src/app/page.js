@@ -17,6 +17,10 @@ const ownedItems = [
   { name: 'Gaming Console', price: 300, ownerAddress: '0x123456789abcdef', id: 5 }
 ];
 
+const handleBuy = (item) => {
+  console.log(`Buying item: ${item.name}`);
+};
+
 export default function Home() {
   const [recipient, setRecipient] = useState('');
   const [amount, setAmount] = useState('');
@@ -30,7 +34,7 @@ export default function Home() {
     <main className={styles.main}>
       <nav>
         <ul style={navStyle}>
-          <li><Image src="/market.jpg" alt="Market" width={100} height={100} /></li> 
+          <li><Image src="/market.jpg" alt="Market" width={100} height={100} /></li>
           <li><a href="/" style={navLinkStyle}>Home</a></li>
           <li><a href="/sellpage" style={navLinkStyle}>List an Item</a></li>
           <li><a href="/ownedpage" style={navLinkStyle}>My Listings</a></li>
@@ -45,9 +49,10 @@ export default function Home() {
             {ownedItems.map((item, index) => (
               <div key={index} className={styles.card}>
                 <h2 className={styles.itemName}>{item.name}</h2>
-                <p className={styles.itemDetail}><strong>Highest borderRadius:</strong> ${item.price}</p>
-                <p className={styles.itemDetail}><strong>Highest Bidder Address:</strong> {item.ownerAddress}</p>
+                <p className={styles.itemDetail}><strong>Price:</strong> ${item.price}</p>
+                <p className={styles.itemDetail}><strong>Owner Address:</strong> {item.ownerAddress}</p>
                 <p className={styles.itemDetail}><strong>ID:</strong> {item.id}</p>
+                <button className={styles.buyButton} onClick={() => handleBuy(item)}>Buy</button>
               </div>
             ))}
           </div>
