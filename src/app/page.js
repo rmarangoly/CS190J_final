@@ -1,8 +1,20 @@
+"use client";
+
 import Image from 'next/image';
 import styles from './page.module.css';
 import Link from 'next/link';
+import { useState } from 'react';
+import { payUser } from '../utils/payment';
 
 export default function Home() {
+  const [recipient, setRecipient] = useState('');
+  const [amount, setAmount] = useState('');
+  const [status, setStatus] = useState('');
+  const handlePayment = async () => {
+    const success = await payUser(recipient, amount);
+    setStatus(success ? 'Payment successful!' : 'Payment failed.');
+  };
+
   return (
     <main className={styles.main}>
       <div className={styles.description}>
@@ -91,6 +103,23 @@ export default function Home() {
           <p>Go to the list page.</p>
         </Link>
       </div>
+      <div>
+      <h1>Blockchain Payment</h1>
+      <input
+        type="text"
+        placeholder="Recipient Address"
+        value={recipient}
+        onChange={(e) => setRecipient(e.target.value)}
+      />
+      <input
+        type="text"
+        placeholder="Amount in ETH"
+        value={amount}
+        onChange={(e) => setAmount(e.target.value)}
+      />
+      <button onClick={handlePayment}>Pay</button>
+      <p>{status}</p>
+    </div>
     </main>
   );
 }
