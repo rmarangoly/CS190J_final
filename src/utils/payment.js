@@ -14,9 +14,10 @@ export const payUser = async (recipient, amount) => {
     const provider = new ethers.providers.Web3Provider(window.ethereum);
     const signer = provider.getSigner();
     const paymentContract = new ethers.Contract(marketplaceAddress, marketplaceABI, signer);
-
-    const transaction = await paymentContract.pay(recipient, { value: ethers.utils.parseEther(amount) });
+    console.log("transaction");
+    const transaction = await paymentContract.buyItem(recipient, { value: ethers.utils.parseEther(amount) });
     await transaction.wait();
+    
 
     return signer.getAddress();
   } catch (err) {

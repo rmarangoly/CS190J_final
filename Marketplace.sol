@@ -54,4 +54,5 @@ contract Marketplace {
         users[userCount].itemsOwned.push(itemCount);
         emit ItemAdded(itemCount, itemName, price, userCount);
     }
+    
 }

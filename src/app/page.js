@@ -8,12 +8,14 @@ import { navStyle, navLinkStyle } from '../app/navbarStyles';
 import Image from 'next/image';
 
 
+
 const marketplaceAddress = '0xE419aEf5E71b5220D3EBAd8a48E6615F1bF53839';
 const marketplaceABI = [
   "function items(uint256) view returns (uint256 id, address owner, uint256 price, bool listed)"
 ];
 
 export default function Home() {
+  const [messages, setMessages] = useState([]);;
   const [items, setItems] = useState([]);
   const [status, setStatus] = useState('');
 
@@ -39,21 +41,33 @@ export default function Home() {
 
     fetchItems();
   }, []);
-
+  
   const handleBuy = async (item) => {
-    setStatus('Processing...');
-    const newOwner = await payUser(item.id, item.price);
-    setStatus(newOwner ? 'Purchase successful!' : 'Purchase failed.');
+    
+    try{
+      
+      //success = true;
+      
+      setStatus('Processing...');
+      const newOwner = await payUser(item.id, item.price);
+      setMessages(prevMessages => [...prevMessages, newOwner ? 'Purchase successful!' : 'Purchase failed.']);
 
-    if (newOwner) {
-      // Refresh the item list after purchase
-      const updatedItems = items.map(i => {
-        if (i.id === item.id) {
-          return { ...i, owner: newOwner, listed: false }; // Update with your address
-        }
-        return i;
-      });
-      setItems(updatedItems);
+      if (newOwner) {
+        // Refresh the item list after purchase
+        const updatedItems = items.map(i => {
+          if (i.id === item.id) {
+            return { ...i, owner: newOwner, listed: false }; // Update with your address
+          }
+          return i;
+        });
+        setItems(updatedItems);
+        
+      }
+      //setMessage("Purchase Successful");
+    }
+    catch (e){
+      
+      setMessage(e.name)
     }
   };
   return (
@@ -74,11 +88,12 @@ export default function Home() {
           <div className={styles.grid}>
             {items.map((item, index) => (
               <div key={index} className={styles.card}>
-                <h2 className={styles.itemName}>{item.name}</h2>
-                <p className={styles.itemDetail}><strong>Price:</strong> ${item.price}</p>
-                <p className={styles.itemDetail}><strong>Owner Address:</strong> {item.ownerAddress}</p>
+                <h2 className={styles.itemName}>{String(item.name)}</h2>
+                <p className={styles.itemDetail}><strong>Price:</strong> {item.price} ETH</p>
+                <p className={styles.itemDetail}><strong>Owner Address:</strong> {String(item.owner).substring(0,5) + "..."}</p>
                 <p className={styles.itemDetail}><strong>ID:</strong> {item.id}</p>
-                <button className={styles.buyButton} onClick={() => handleBuy(item)}>Buy</button>
+                <button className={styles.buyButton} onClick={async () => await handleBuy(item)}>Buy</button>
+                {messages[index]}
               </div>
             ))}
           </div>

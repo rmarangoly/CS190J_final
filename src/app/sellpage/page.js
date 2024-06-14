@@ -12,6 +12,7 @@ const List = () => {
 
   // Function to handle form submission
   const handleSubmit = (e) => {
+    //console.log("Submitted item");
     e.preventDefault();
     
     // Create a new item object
@@ -66,7 +67,7 @@ const List = () => {
           />
         </div>
         <div style={fieldStyle}>
-          <label>Price:</label>
+          <label>Price (In ethereum):</label>
           <input
             type="number"
             value={price}
