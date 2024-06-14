@@ -86,7 +86,7 @@ export default function Home() {
           <p>No items owned.</p>
         ) : (
           <div className={styles.grid}>
-            {items.map((item, index) => (
+            {items.filter(item => item.listed).map((item, index) => (
               <div key={index} className={styles.card}>
                 <h2 className={styles.itemName}>{String(item.name)}</h2>
                 <p className={styles.itemDetail}><strong>Price:</strong> {item.price} ETH</p>
