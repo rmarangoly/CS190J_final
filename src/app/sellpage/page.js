@@ -16,7 +16,7 @@ const List = () => {
     e.preventDefault();
 
     // Call the smart contract to list the item
-    const success = await listItemOnContract(name, price);
+    const success = await listItemOnContract(price);
     
     if (success) {
       // Create a new item object

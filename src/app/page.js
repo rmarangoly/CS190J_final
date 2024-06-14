@@ -8,7 +8,7 @@ import { navStyle, navLinkStyle } from '../app/navbarStyles';
 import Image from 'next/image';
 
 
-const marketplaceAddress = '0x9e5B612221A362B79F3D1A1B7bB10561e64c04B4';
+const marketplaceAddress = '0xE419aEf5E71b5220D3EBAd8a48E6615F1bF53839';
 const marketplaceABI = [
   "function items(uint256) view returns (uint256 id, address owner, uint256 price, bool listed)"
 ];

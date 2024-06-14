@@ -1,11 +1,11 @@
 import { ethers } from 'ethers';
 
-const marketplaceAddress = '0x9e5B612221A362B79F3D1A1B7bB10561e64c04B4';
+const marketplaceAddress = '0xE419aEf5E71b5220D3EBAd8a48E6615F1bF53839';
 const marketplaceABI = [
   "function buyItem(uint256 id) public payable",
   "function items(uint256) view returns (uint256 id, address owner, uint256 price, bool listed)",
   "function getItemCount() public view returns (uint256)",
-  "function listItem(string memory name, uint256 price) public",
+  "function listItem(uint256 price) public",
 ];
 export const payUser = async (recipient, amount) => {
   try {
@@ -34,7 +34,7 @@ export const getItemCount = async () => {
   const itemCount = await contract.getItemCount();
   return itemCount.toNumber();
 };
-export const listItemOnContract = async (name, price) => {
+export const listItemOnContract = async (price) => {
   try {
     if (!window.ethereum) throw new Error('No crypto wallet found. Please install it.');
 
@@ -44,7 +44,9 @@ export const listItemOnContract = async (name, price) => {
     const marketplaceContract = new ethers.Contract(marketplaceAddress, marketplaceABI, signer);
 
     const priceInWei = ethers.utils.parseEther(price.toString());
-    const transaction = await marketplaceContract.listItem(name, priceInWei);
+    console.log(price.toString())
+    console.log(priceInWei)
+    const transaction = await marketplaceContract.listItem(ethers.utils.parseEther(price.toString()));
     await transaction.wait();
 
     return true;
