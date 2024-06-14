@@ -4,6 +4,7 @@ pragma solidity ^0.8.0;
 contract Marketplace {
     struct Item {
         uint256 id;
+        string name;
         address owner;
         uint256 price;
         bool listed;
@@ -12,13 +13,13 @@ contract Marketplace {
     mapping(uint256 => Item) public items;
     uint256 public itemCount;
 
-    event ItemListed(uint256 id, address owner, uint256 price);
+    event ItemListed(uint256 id, string name, address owner, uint256 price);
     event ItemBought(uint256 id, address newOwner, uint256 price);
 
-    function listItem(uint256 price) public {
+    function listItem(string memory name, uint256 price) public {
         itemCount++;
-        items[itemCount] = Item(itemCount, msg.sender, price, true);
-        emit ItemListed(itemCount, msg.sender, price);
+        items[itemCount] = Item(itemCount, name, msg.sender, price, true);
+        emit ItemListed(itemCount, name, msg.sender, price);
     }
 
     function buyItem(uint256 id) public payable {
