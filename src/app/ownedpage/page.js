@@ -1,12 +1,79 @@
+"use client"; // This makes the component a client component
+
+import { useState, useEffect } from 'react';
+import { ethers } from 'ethers';
 import styles from '../page.module.css';
 
-const ownedItems = [
-  { name: 'Vintage Watch', price: 250, ownerAddress: '0x123456789abcdef', id: 1 },
-  { name: 'Leather Wallet', price: 75, ownerAddress: '0x123456789abcdef', id: 2 },
-  { name: 'Bluetooth Speaker', price: 150, ownerAddress: '0x123456789abcdef', id: 3 },
-  { name: 'Smartphone', price: 600, ownerAddress: '0x123456789abcdef', id: 4 },
-  { name: 'Gaming Console', price: 300, ownerAddress: '0x123456789abcdef', id: 5 }
+const marketplaceAddress = '0xE419aEf5E71b5220D3EBAd8a48E6615F1bF53839';
+const marketplaceABI = [
+  "function items(uint256) view returns (uint256 id, address owner, uint256 price, bool listed)"
 ];
+
+export default function OwnedPage() {
+  const [items, setItems] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchItems = async () => {
+      if (!window.ethereum) return;
+      const provider = new ethers.providers.Web3Provider(window.ethereum);
+      const contract = new ethers.Contract(marketplaceAddress, marketplaceABI, provider);
+
+      try {
+        const itemCount = await contract.itemCount();
+        const items = [];
+        for (let i = 1; i <= itemCount; i++) {
+          const item = await contract.items(i);
+          items.push({
+            id: item.id.toString(),
+            owner: item.owner,
+            price: ethers.utils.formatEther(item.price),
+            listed: item.listed,
+            name: item.name, // Assuming the item has a name property
+          });
+        }
+        setItems(items);
+      } catch (error) {
+        console.error('Error fetching items:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchItems();
+  }, []);
+
+  return (
+    <main className={styles.main}>
+      <nav>
+        <ul style={navStyle}>
+          <li><a href="/" style={navLinkStyle}>Home</a></li>
+          <li><a href="/sellpage" style={navLinkStyle}>List an Item</a></li>
+          <li><a href="/ownedpage" style={navLinkStyle}>My Listings</a></li>
+        </ul>
+      </nav>
+      <div className={styles.content}>
+        <h1 className={styles.title}>Owned Items</h1>
+        {loading ? (
+          <p>Loading items...</p>
+        ) : items.length === 0 ? (
+          <p>No items owned.</p>
+        ) : (
+          <div className={styles.grid}>
+            {items.map((item, index) => (
+              <div key={index} className={styles.card}>
+                <h2 className={styles.itemName}>{item.name}</h2>
+                <p className={styles.itemDetail}><strong>Price:</strong> ${item.price}</p>
+                <p className={styles.itemDetail}><strong>Owner Address:</strong> {item.owner}</p>
+                <p className={styles.itemDetail}><strong>ID:</strong> {item.id}</p>
+              </div>
+            ))}
+          </div>
+        )}
+      </div>
+    </main>
+  );
+}
 
 const navStyle = {
   listStyleType: 'none',
@@ -20,42 +87,11 @@ const navStyle = {
   position: 'fixed',
   top: 0,
   left: 0,
-  zIndex: 1000
+  zIndex: 1000,
 };
 
 const navLinkStyle = {
   color: 'white',
   textDecoration: 'none',
-  padding: '10px'
+  padding: '10px',
 };
-
-export default function OwnedPage() {
-  return (
-    <main className={styles.main}>
-      <nav>
-        <ul style={navStyle}>
-          <li><a href="/" style={navLinkStyle}>Home</a></li>
-          <li><a href="/sellpage" style={navLinkStyle}>List an Item</a></li>
-          <li><a href="/ownedpage" style={navLinkStyle}>My Listings</a></li>
-        </ul>
-      </nav>
-      <div className={styles.content}>
-        <h1 className={styles.title}>Owned Items</h1>
-        {ownedItems.length === 0 ? (
-          <p>No items owned.</p>
-        ) : (
-          <div className={styles.grid}>
-            {ownedItems.map((item, index) => (
-              <div key={index} className={styles.card}>
-                <h2 className={styles.itemName}>{item.name}</h2>
-                <p className={styles.itemDetail}><strong>Price:</strong> ${item.price}</p>
-                <p className={styles.itemDetail}><strong>Owner Address:</strong> {item.ownerAddress}</p>
-                <p className={styles.itemDetail}><strong>ID:</strong> {item.id}</p>
-              </div>
-            ))}
-          </div>
-        )}
-      </div>
-    </main>
-  );
-}
