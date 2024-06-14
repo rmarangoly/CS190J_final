@@ -76,8 +76,8 @@ export default function OwnedPage() {
             {items.map((item, index) => (
               <div key={index} className={styles.card}>
                 <h2 className={styles.itemName}>{item.name}</h2>
-                <p className={styles.itemDetail}><strong>Price:</strong> ${item.price}</p>
-                <p className={styles.itemDetail}><strong>Owner Address:</strong> {item.owner}</p>
+                <p className={styles.itemDetail}><strong>Price:</strong> {item.price} ETH</p>
+                <p className={styles.itemDetail}><strong>Owner Address:</strong> {String(item.owner).substring(0,5) + "..."}</p>
                 <p className={styles.itemDetail}><strong>ID:</strong> {item.id}</p>
               </div>
             ))}
