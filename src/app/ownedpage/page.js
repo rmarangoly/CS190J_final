@@ -1,12 +1,14 @@
-"use client"; // This makes the component a client component
+'use client';  // Add this line at the top
 
 import { useState, useEffect } from 'react';
 import { ethers } from 'ethers';
 import styles from '../page.module.css';
 
-const marketplaceAddress = '0x9e5B612221A362B79F3D1A1B7bB10561e64c04B4';
+const marketplaceAddress = '0x703eFB529f7FD843d4393F4da227dF31bC0B4810';
 const marketplaceABI = [
-  "function items(uint256) view returns (uint256 id, string memory name, address owner, uint256 price, bool listed)"
+  "function items(uint256) view returns (uint256 id, string memory name, address owner, uint256 price, bool listed)",
+  "function itemCount() view returns (uint256)",
+  "function relistItem(uint256 itemId) public" // Ensure this matches your contract's function
 ];
 
 export default function OwnedPage() {
@@ -17,22 +19,19 @@ export default function OwnedPage() {
   useEffect(() => {
     const fetchItems = async () => {
       if (!window.ethereum) return;
-      
-      //load the metamask information on page load
+
       const provider = new ethers.providers.Web3Provider(window.ethereum);
       const signer = provider.getSigner();
       const address = await signer.getAddress();
-      //we need the user address to only show user owned items
       setUserAddress(address);
-      //get contract
+
       const contract = new ethers.Contract(marketplaceAddress, marketplaceABI, provider);
-      //get items
+
       try {
         const itemCount = await contract.itemCount();
         const items = [];
         for (let i = 1; i <= itemCount; i++) {
           const item = await contract.items(i);
-          //array to load items
           if (item.owner.toLowerCase() === address.toLowerCase()) {
             items.push({
               id: item.id.toString(),
@@ -53,6 +52,26 @@ export default function OwnedPage() {
 
     fetchItems();
   }, []);
+
+  const handleRelist = async (itemId) => {
+    if (!window.ethereum) return;
+
+    const provider = new ethers.providers.Web3Provider(window.ethereum);
+    const signer = provider.getSigner();
+    const contract = new ethers.Contract(marketplaceAddress, marketplaceABI, signer);
+
+    try {
+      const tx = await contract.relistItem(itemId);
+      await tx.wait();
+      // Update the item list after relisting
+      const updatedItems = items.map(item => 
+        item.id === itemId ? { ...item, listed: true } : item
+      );
+      setItems(updatedItems);
+    } catch (error) {
+      console.error('Error relisting item:', error);
+    }
+  };
 
   return (
     <main className={styles.main}>
@@ -75,8 +94,12 @@ export default function OwnedPage() {
               <div key={index} className={styles.card}>
                 <h2 className={styles.itemName}>{item.name}</h2>
                 <p className={styles.itemDetail}><strong>Price:</strong> {item.price} ETH</p>
-                <p className={styles.itemDetail}><strong>Owner Address:</strong> {String(item.owner).substring(0,5) + "..."}</p>
+                <p className={styles.itemDetail}><strong>Owner Address:</strong> {item.owner}</p>
                 <p className={styles.itemDetail}><strong>ID:</strong> {item.id}</p>
+                <p className={styles.itemDetail}><strong>Listed:</strong> {item.listed ? 'Yes' : 'No'}</p>
+                {!item.listed && (
+                  <button onClick={() => handleRelist(item.id)} style={buttonStyle}>RELIST</button>
+                )}
               </div>
             ))}
           </div>
@@ -105,4 +128,13 @@ const navLinkStyle = {
   color: 'white',
   textDecoration: 'none',
   padding: '10px',
+};
+
+const buttonStyle = {
+  padding: '10px 20px',
+  backgroundColor: '#0070f3',
+  color: 'white',
+  border: 'none',
+  borderRadius: '5px',
+  cursor: 'pointer',
 };

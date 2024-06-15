@@ -39,4 +39,10 @@ contract Marketplace {
     function getItemCount() public view returns (uint256) {
         return itemCount;
     }
+
+    function relistItem(uint256 itemId) public {
+        Item storage item = items[itemId];
+        require(item.owner == msg.sender, "You are not the owner of this item");
+        item.listed = true;
+    }
 }
