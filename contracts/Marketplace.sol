@@ -17,12 +17,6 @@ contract Marketplace {
     event ItemListed(uint256 id, string name, address owner, uint256 price);
     event ItemBought(uint256 id, address newOwner, uint256 price);
 
-    modifier noReentrancy() {
-        require(!locked, "ReentrancyGuard: reentrant call");
-        locked = true;
-        _;
-        locked = false;
-    }
 
     function listItem(string memory name, uint256 price) public {
         itemCount++;
@@ -30,7 +24,7 @@ contract Marketplace {
         emit ItemListed(itemCount, name, msg.sender, price);
     }
 
-    function buyItem(uint256 id) public payable noReentrancy() {
+    function buyItem(uint256 id) public payable() {
         Item storage item = items[id];
         require(item.listed, "Item not listed for sale");
         require(msg.value >= item.price, "Insufficient funds to buy item");
