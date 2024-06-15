@@ -4,9 +4,11 @@ import { useState, useEffect } from 'react';
 import { ethers } from 'ethers';
 import styles from '../page.module.css';
 
+//market place stuff
 const marketplaceAddress = '0x9e5B612221A362B79F3D1A1B7bB10561e64c04B4';
 const marketplaceABI = [
-  "function items(uint256) view returns (uint256 id, string memory name, address owner, uint256 price, bool listed)"
+  "function items(uint256) view returns (uint256 id, string memory name, address owner, uint256 price, bool listed)",
+  "function itemCount() view returns (uint256)"
 ];
 
 export default function OwnedPage() {
@@ -33,6 +35,7 @@ export default function OwnedPage() {
         for (let i = 1; i <= itemCount; i++) {
           const item = await contract.items(i);
           //array to load items
+          console.log("owner: " + item.owner)
           if (item.owner.toLowerCase() === address.toLowerCase()) {
             items.push({
               id: item.id.toString(),
@@ -74,8 +77,8 @@ export default function OwnedPage() {
             {items.map((item, index) => (
               <div key={index} className={styles.card}>
                 <h2 className={styles.itemName}>{item.name}</h2>
-                <p className={styles.itemDetail}><strong>Price:</strong> {item.price} ETH</p>
-                <p className={styles.itemDetail}><strong>Owner Address:</strong> {String(item.owner).substring(0,5) + "..."}</p>
+                <p className={styles.itemDetail}><strong>Price:</strong> ${item.price}</p>
+                <p className={styles.itemDetail}><strong>Owner Address:</strong> {item.owner}</p>
                 <p className={styles.itemDetail}><strong>ID:</strong> {item.id}</p>
               </div>
             ))}

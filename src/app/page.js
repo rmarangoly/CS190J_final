@@ -14,6 +14,7 @@ const marketplaceABI = [
   "function items(uint256) view returns (uint256 id, string memory name, address owner, uint256 price, bool listed)"
 ];
 
+
 export default function Home() {
   const [messages, setMessages] = useState([]);;
   const [items, setItems] = useState([]);
@@ -29,11 +30,13 @@ export default function Home() {
       const items = [];
       for (let i = 1; i <= itemCount; i++) {
         const item = await contract.items(i);
+        console.log("OWNER: " + item.owner);
         items.push({
           id: item.id.toString(),
           owner: item.owner,
           price: ethers.utils.formatEther(item.price),
           listed: item.listed,
+          name: item.name
         });
       }
       setItems(items);
