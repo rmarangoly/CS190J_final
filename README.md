@@ -31,7 +31,7 @@ npm run dev
 The application should now be running on http://localhost:3000.
 
 ## Connecting MetaMask Wallet
-To interact with the application, you need to connect your MetaMask wallet and switch to the Sepolia testnet.
+To interact with the application, you need to connect your MetaMask wallet and switch to the Sepolia testnet. In order to do so, connect it through the listpage section where youc an list an item and it will allow you to connect wallet. 
 
 ## Switching to the Sepolia Testnet
 - Open MetaMask and click on the network dropdown at the top of the extension.
