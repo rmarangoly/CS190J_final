@@ -11,11 +11,10 @@ const List = () => {
   const [description, setDescription] = useState('');
   const [message, setMessage] = useState('');
 
-  
   const handleSubmit = async (e) => {
     e.preventDefault();
-
-    const success = await listItemOnContract(price);
+    // Call the smart contract to list the item
+    const success = await listItemOnContract(name, price);
     
     if (success) {
       
@@ -68,7 +67,7 @@ const List = () => {
           />
         </div>
         <div style={fieldStyle}>
-          <label>Price:</label>
+          <label>Price (In ethereum):</label>
           <input
             type="number"
             value={price}

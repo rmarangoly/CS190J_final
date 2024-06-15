@@ -3,6 +3,7 @@ pragma solidity ^0.8.0;
 
 contract Marketplace {
     struct Item {
+
         uint256 id;
         string name;
         address owner;

@@ -4,33 +4,44 @@ import { useState, useEffect } from 'react';
 import { ethers } from 'ethers';
 import styles from '../page.module.css';
 
-const marketplaceAddress = '0xE419aEf5E71b5220D3EBAd8a48E6615F1bF53839';
+const marketplaceAddress = '0x9e5B612221A362B79F3D1A1B7bB10561e64c04B4';
 const marketplaceABI = [
-  "function items(uint256) view returns (uint256 id, address owner, uint256 price, bool listed)"
+  "function items(uint256) view returns (uint256 id, string memory name, address owner, uint256 price, bool listed)"
 ];
 
 export default function OwnedPage() {
   const [items, setItems] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [userAddress, setUserAddress] = useState('');
 
   useEffect(() => {
     const fetchItems = async () => {
       if (!window.ethereum) return;
+      
+      //load the metamask information on page load
       const provider = new ethers.providers.Web3Provider(window.ethereum);
+      const signer = provider.getSigner();
+      const address = await signer.getAddress();
+      //we need the user address to only show user owned items
+      setUserAddress(address);
+      //get contract
       const contract = new ethers.Contract(marketplaceAddress, marketplaceABI, provider);
-
+      //get items
       try {
         const itemCount = await contract.itemCount();
         const items = [];
         for (let i = 1; i <= itemCount; i++) {
           const item = await contract.items(i);
-          items.push({
-            id: item.id.toString(),
-            owner: item.owner,
-            price: ethers.utils.formatEther(item.price),
-            listed: item.listed,
-            name: item.name, // Assuming the item has a name property
-          });
+          //array to load items
+          if (item.owner.toLowerCase() === address.toLowerCase()) {
+            items.push({
+              id: item.id.toString(),
+              owner: item.owner,
+              price: ethers.utils.formatEther(item.price),
+              listed: item.listed,
+              name: item.name,
+            });
+          }
         }
         setItems(items);
       } catch (error) {
@@ -63,8 +74,8 @@ export default function OwnedPage() {
             {items.map((item, index) => (
               <div key={index} className={styles.card}>
                 <h2 className={styles.itemName}>{item.name}</h2>
-                <p className={styles.itemDetail}><strong>Price:</strong> ${item.price}</p>
-                <p className={styles.itemDetail}><strong>Owner Address:</strong> {item.owner}</p>
+                <p className={styles.itemDetail}><strong>Price:</strong> {item.price} ETH</p>
+                <p className={styles.itemDetail}><strong>Owner Address:</strong> {String(item.owner).substring(0,5) + "..."}</p>
                 <p className={styles.itemDetail}><strong>ID:</strong> {item.id}</p>
               </div>
             ))}
