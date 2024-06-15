@@ -5,38 +5,28 @@ import styles from '../page.module.css';
 import { listItemOnContract } from '../../utils/payment';
 
 const List = () => {
-  // State hooks to manage form inputs and confirmation message
+  
   const [name, setName] = useState('');
   const [price, setPrice] = useState('');
   const [description, setDescription] = useState('');
   const [message, setMessage] = useState('');
 
-  // Function to handle form submission
-
   const handleSubmit = async (e) => {
-
     e.preventDefault();
-
     // Call the smart contract to list the item
     const success = await listItemOnContract(name, price);
     
     if (success) {
-      // Create a new item object
-      const newItem = { name, price, description };
       
-      // Retrieve existing items from localStorage or initialize an empty array
+      const newItem = { name, price, description };
       const items = JSON.parse(localStorage.getItem('items')) || [];
       
-      // Add the new item to the list
+      
       items.push(newItem);
-      
-      // Store the updated list back in localStorage
       localStorage.setItem('items', JSON.stringify(items));
-      
-      // Set a confirmation message
       setMessage('Item listed successfully on the blockchain and locally!');
       
-      // Clear form fields
+     
       setName('');
       setPrice('');
       setDescription('');
