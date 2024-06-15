@@ -4,11 +4,9 @@ import { useState, useEffect } from 'react';
 import { ethers } from 'ethers';
 import styles from '../page.module.css';
 
-//market place stuff
-const marketplaceAddress = '0xE419aEf5E71b5220D3EBAd8a48E6615F1bF53839';
+const marketplaceAddress = '0x9e5B612221A362B79F3D1A1B7bB10561e64c04B4';
 const marketplaceABI = [
-  "function items(uint256) view returns (uint256 id, address owner, uint256 price, bool listed)",
-  "function itemCount() view returns (uint256)"
+  "function items(uint256) view returns (uint256 id, string memory name, address owner, uint256 price, bool listed)"
 ];
 
 export default function OwnedPage() {
