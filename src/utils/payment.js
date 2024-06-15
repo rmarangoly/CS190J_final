@@ -1,6 +1,6 @@
 import { ethers } from 'ethers';
 
-const marketplaceAddress = '0x9e5B612221A362B79F3D1A1B7bB10561e64c04B4';
+const marketplaceAddress = '0x703eFB529f7FD843d4393F4da227dF31bC0B4810';
 const marketplaceABI = [
   "function buyItem(uint256 id) public payable",
   "function items(uint256) view returns (uint256 id, string memory name, address owner, uint256 price, bool listed)",
